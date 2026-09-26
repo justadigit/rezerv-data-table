@@ -49,10 +49,10 @@
 
 ## Deliverables
 
-- [ ] **R26** Publish a publicly accessible GitHub repository for Part 2, separate from Part 1 under the locked project decision.
+- [x] **R26** Publish a publicly accessible GitHub repository for Part 2, separate from Part 1 under the locked project decision.
 - [x] **R27** Provide the class timetable view and a small second-dataset demo showcasing server-style and on-demand behavior.
 - [x] **R28** Complete the README with setup, component API and column definitions, client/server sorting and pagination strategy, both expansion modes, sticky-column approach, state management rationale, tradeoffs, and assumptions.
-- [ ] **R29** Deploy the site to Vercel, Netlify, or equivalent and submit the live URL. The locked plan favors Vercel; Public deployment remains open until its URL is verified.
+- [x] **R29** Deploy the site to Vercel, Netlify, or equivalent and submit the live URL. The locked plan favors Vercel; The production URL is verified below and recorded in the README.
 
 ## Locked project details that refine the assessment
 
