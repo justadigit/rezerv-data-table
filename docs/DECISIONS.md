@@ -15,10 +15,10 @@ Decisions are project choices, not claims that the assessment mandates them. Beh
 | D09 | No virtualization engine in v1 | Pagination bounds rendered rows; profile before adding complexity. |
 | D10 | Controlled/manual sort and pagination at the API level | Locked brief requires it, despite the assessment labeling server support bonus. |
 | D11 | Mocked service for server-style demo | Assessment requires no backend; this proves controlled flow without infrastructure. |
-| D12 | Vercel as planned deployment target | Practical choice under assessment allowance for Vercel, Netlify, or equivalent; deployment is later-phase work. |
+| D12 | Vercel as planned deployment target | Practical choice under assessment allowance for Vercel, Netlify, or equivalent; publication is handled at the final delivery gate. |
 | D13 | Normalize invalid client `pageIndex`; preserve controlled `pageIndex` | Uncontrolled state can recover locally, while a controlled value belongs to the parent. |
 | D14 | npm with `package-lock.json` | Lockfile installs minimize reviewer setup. |
-| D15 | React Router in `app/` | Reserves `/` and `/demo` without coupling routes to future feature internals. |
+| D15 | React Router in `app/` | Reserves `/` and `/demo` without coupling routes to feature internals. |
 | D16 | Vitest + React Testing Library + user-event; defer Playwright | Covers foundation behavior with lightweight component tests; browser automation can be reconsidered later. |
 | D17 | CSS custom properties are canonical design tokens | Tailwind maps to one runtime source for semantic visual values. |
 | D18 | Heroicons exported only through `design/icons/` | Keeps approved icon names and imports centralized. |

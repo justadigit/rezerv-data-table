@@ -139,7 +139,7 @@ export function ClassTimetable({ fixture }: { fixture: InitialFixture }) {
         />
       </section>
 
-      {!loading && !error && rows.length > 0 ? (
+      {!loading && !error && onDemandRows.length > 0 ? (
         <section aria-labelledby="live-rosters-title" className="space-y-4">
           <div>
             <h2

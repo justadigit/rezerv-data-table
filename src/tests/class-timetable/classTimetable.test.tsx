@@ -24,6 +24,28 @@ function classRow(area: HTMLElement, name: string) {
 beforeEach(resetRosterAttempts);
 
 describe("class timetable integration", () => {
+  it("uses a paginated 5,000-row fixture for client sorting checks", async () => {
+    const user = userEvent.setup();
+    renderPage("/?fixture=stress");
+    const schedule = section("Class schedule");
+    expect(
+      await within(schedule).findByText("Studio Session 0001"),
+    ).toBeInTheDocument();
+    expect(within(schedule).getByText("Page 1 of 1000")).toBeInTheDocument();
+    expect(within(schedule).getAllByRole("row")).toHaveLength(6);
+    await user.click(within(schedule).getByRole("button", { name: "Class" }));
+    await user.click(within(schedule).getByRole("button", { name: "Class" }));
+    expect(
+      within(schedule).getByText("Studio Session 5000"),
+    ).toBeInTheDocument();
+    await user.click(
+      within(schedule).getByRole("button", { name: "Next page" }),
+    );
+    expect(
+      within(schedule).getByText("Studio Session 4995"),
+    ).toBeInTheDocument();
+  });
+
   it("shows loading, class fields, status, sorting, pagination, and inline attendees", async () => {
     const user = userEvent.setup();
     renderPage();

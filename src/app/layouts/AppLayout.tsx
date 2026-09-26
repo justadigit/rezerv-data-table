@@ -24,7 +24,7 @@ export function AppLayout() {
               Class timetable
             </NavLink>
             <NavLink to="/demo" className={navClass}>
-              Internal table preview
+              User directory
             </NavLink>
           </nav>
         </div>

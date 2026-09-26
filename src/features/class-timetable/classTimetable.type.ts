@@ -24,4 +24,4 @@ export type ClassSession = {
   rosterScenario?: "success" | "empty" | "retry" | "slow";
 };
 
-export type InitialFixture = "success" | "error" | "empty";
+export type InitialFixture = "success" | "error" | "empty" | "stress";

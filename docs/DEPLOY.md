@@ -1,23 +1,17 @@
-# Local and deployment plan
+# Local and deployment record
 
-**Phase 1 status:** The foundation application and npm scripts exist. Assessment features and deployment remain pending.
+## Local build
 
-## Prerequisites
+Use Node.js 22.12 or newer and npm. Run `npm ci`, then `npm run dev` for local review. `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, and `npm run format:check` are release checks; `npm run validate` repeats lint, typecheck, tests, and build. Vite emits `dist/`. The mock transport requires no environment variables or secrets.
 
-Use Node.js 22.12 or newer and npm. A later phase will create a public GitHub repository for Part 2, separate from Part 1. Vercel is the planned host; the assessment also allows Netlify or equivalent.
+The project is a Vite single-page app with routes `/` and `/demo`. `vercel.json` rewrites direct route requests to `/index.html`, following [Vercel's Vite SPA guidance](https://vercel.com/docs/frameworks/frontend/vite). Static assets are served from `dist/`.
 
-## Local and quality commands
+## Release sequence
 
-Run `npm ci`, then `npm run dev` for local development. Quality commands are `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, and `npm run format:check`. `npm run validate` runs lint, typecheck, tests, and build together. `npm run test:watch` and `npm run format` are available during development. The Vite static build emits `dist/`.
+1. Finish both feature views and README; verify desktop, tablet, mobile, keyboard, loading/error/empty, expansion, and stress fixture.
+2. Run the clean-install quality gates and inspect build output.
+3. Commit the milestone, create/push a public Part 2 GitHub repository, and confirm anonymous access.
+4. Deploy the production build to Vercel and verify direct navigation to both routes, main interactions, mobile layout, and browser console.
+5. Add verified repository and live links to README, and record final delivery status here.
 
-## Environment variables
-
-None are currently required; the mock transport needs no secrets. If later implementation adds variables, document names, scope, safe defaults, and host configuration here before deployment. Never commit credentials.
-
-## Pre-deploy and smoke check
-
-Before deploying: complete the README, run all four quality gates, inspect both demos at desktop/tablet/mobile widths, test slow/error/empty fixtures, and confirm controlled and on-demand flows. Publish a public repository and verify it opens anonymously.
-
-On Vercel, connect the Part 2 repository, use the selected package manager, run its `build` script, and serve `dist/`. Configure SPA rewrites only if routing actually needs them. After deployment, open the live URL and verify both demos, sorting, pagination, expansion, pinned scrolling, loading/error/empty states, and keyboard access. Record the URL in README and the submission.
-
-If a later deployment fails, inspect build logs and redeploy the last known good commit or use the host's rollback facility. No rollback action is needed in Phase 1.
+The repository and production URLs are recorded only after they have been verified. If deployment fails, inspect Vercel build logs and redeploy the last known good commit; account configuration failures do not require application architecture changes.

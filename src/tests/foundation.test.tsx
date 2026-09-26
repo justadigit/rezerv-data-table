@@ -6,7 +6,7 @@ import { App } from "@/app/App";
 import { Button } from "@/components/ui/button";
 
 describe("app routes", () => {
-  it("renders the class timetable and navigates to the internal table preview", async () => {
+  it("renders the class timetable and navigates to the user directory", async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -18,11 +18,9 @@ describe("app routes", () => {
       screen.getByRole("heading", { name: "Class Timetable" }),
     ).toBeInTheDocument();
 
-    await user.click(
-      screen.getByRole("link", { name: "Internal table preview" }),
-    );
+    await user.click(screen.getByRole("link", { name: "User directory" }));
     expect(
-      screen.getByRole("heading", { name: "Reusable DataTable" }),
+      screen.getByRole("heading", { name: "User Directory" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
   });

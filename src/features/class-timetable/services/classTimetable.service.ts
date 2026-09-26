@@ -1,5 +1,9 @@
 import { mockTransport } from "@/core/api";
-import { CLASS_SESSIONS, rosterForClass } from "../classTimetable.mock";
+import {
+  CLASS_SESSIONS,
+  getStressClasses,
+  rosterForClass,
+} from "../classTimetable.mock";
 import type {
   Attendee,
   ClassSession,
@@ -19,7 +23,11 @@ export async function loadClasses(
 ): Promise<readonly ClassSession[]> {
   try {
     return await mockTransport<readonly ClassSession[]>(
-      fixture === "empty" ? [] : CLASS_SESSIONS,
+      fixture === "empty"
+        ? []
+        : fixture === "stress"
+          ? getStressClasses()
+          : CLASS_SESSIONS,
       { latencyMs: 450, fail: fixture === "error" && attempt === 0, signal },
     );
   } catch (error) {

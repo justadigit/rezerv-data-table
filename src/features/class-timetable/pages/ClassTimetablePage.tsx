@@ -6,7 +6,9 @@ export function ClassTimetablePage() {
   const [searchParams] = useSearchParams();
   const value = searchParams.get("fixture");
   const fixture: InitialFixture =
-    value === "error" || value === "empty" ? value : "success";
+    value === "error" || value === "empty" || value === "stress"
+      ? value
+      : "success";
 
   return (
     <div className="space-y-8">

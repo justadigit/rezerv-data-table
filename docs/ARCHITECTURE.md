@@ -2,7 +2,7 @@
 
 This document owns project structure and dependency boundaries. [Contracts](CONTRACTS.md) owns DataTable behavior; [laws](LAWS.md) makes the boundaries enforceable.
 
-## Planned structure
+## Structure
 
 ```text
 src/
@@ -14,7 +14,7 @@ src/
 └── tests/        # shared test support and cross-cutting tests
 ```
 
-This is a responsibility map, not a request to create empty folders. Phase 1 populates `app`, `components`, `design`, `core`, and `tests`; `features` waits for feature implementation. There is no `shared/` folder.
+This is the implemented responsibility map. Both `class-timetable` and `users-demo` live in `features/`. There is no `shared/` folder.
 
 ## Ownership and dependency direction
 

@@ -1,82 +1,55 @@
 # Rezerv Frontend Engineering Assessment — Part 2
 
-## Project overview
+A typed, reusable DataTable presented in two dashboard views. Review the Class Timetable at `/` for client sorting, pagination, pinned columns, and both expansion modes; open `/demo` for the User Directory, which uses the same table with parent-owned sorting and pagination against a mocked server. No backend or environment variables are required.
 
-Phase 5 implements the fitness studio Class Timetable with the existing generic DataTable. The official second dataset and deployment remain future work.
+## Routes and fixtures
 
-## Assessment scope
+| Route | View | What it demonstrates |
+| --- | --- | --- |
+| `/` | Class Timetable | Class and attendee data, client processing, inline attendee details, on-demand rosters |
+| `/demo` | User Directory | Different parent and child types, controlled/manual server-style sort and pagination, on-demand activity |
 
-See [requirements](docs/REQUIREMENTS.md), traced to the original assessment and the Phase 0 brief.
+For UAT, `/?fixture=error`, `/?fixture=empty`, and `/demo?fixture=error|empty|slow` expose deterministic request states. `/?fixture=stress` selects 5,000 deterministic class rows without changing table state or the normal reviewer view. Retry recovers the error fixtures. In Live rosters, Power Vinyasa succeeds, Boxing Basics is empty, and Mobility Lab fails once before retry succeeds. In the User Directory, the first three users exercise the same activity outcomes.
 
-## Technology stack
+## Stack and setup
 
-React, strict TypeScript, Vite, Tailwind CSS, React Router, and Heroicons through the design layer. Tests use Vitest, React Testing Library, and user-event.
-
-## Implemented features
-
-The generic DataTable provides semantic markup, sortable button headers, client and manual pagination controls, column-aligned loading skeletons, error/empty states, left-pinned columns, and horizontal scrolling. Inline expansion renders caller-supplied children; on-demand expansion has row-local loading, success, empty, error, retry, and default success caching. Expansion buttons are native keyboard controls with `aria-expanded` and stable detail IDs. The Class Timetable uses this public API without changing DataTable internals.
-
-The timetable contains 28 deterministic classes: 20 with inline attendees and 8 with on-demand rosters. Its columns are Class (pinned), Instructor, Start time, Duration, Attendance, and Status. Relevant columns use client sorting, including a feature-owned status comparator; both sections use client pagination. Attendee details show names, email, membership, and text check-in state. Class, Attendee, and status types, fixtures, formatting, data access, and error normalization live in `src/features/class-timetable/`.
-
-## Routes and demo pages
-
-`/` is the Class Timetable. Its main **Class schedule** section demonstrates inline expansion and its smaller **Live rosters** section demonstrates on-demand expansion. The generic API accepts one expansion mode per table, so the two sections share the same class model and column definitions. `/demo` remains an internal neutral DataTable preview; it is not the official second dataset.
-
-The initial class request has a 450 ms mock delay so the table skeleton is visible. Open `/?fixture=error` for a deterministic initial failure and use **Retry loading classes** to recover. Open `/?fixture=empty` for an empty parent table. The normal route shows success. In Live rosters, **Power Vinyasa** loads successfully, **Boxing Basics** has an empty roster, **Mobility Lab** fails once and succeeds on retry, and **HIIT Express** has a slower request. Empty attendee rosters use feature-owned copy through the optional expansion empty renderer.
-
-## Expansion API
-
-Pass `expansion` to `DataTable<TRow, TChild>`. Inline mode supplies `getChildren(row)`; on-demand mode supplies `loadChildren(row, signal)`. Both modes supply `renderChildren(children, row, context)`, where the typed context includes `row`, `rowId`, and `children`. Existing two-argument renderers remain valid. Both modes may also provide `renderEmpty({ row, rowId })` for successful zero-child results; otherwise the table shows its generic fallback. The first data cell contains the toggle, and the detail row spans the data columns without affecting parent pagination.
-
-On-demand success and empty success are cached by stable `getRowId` by default; set `cache: false` to refetch on re-expansion. Errors remain row-local and offer Retry. A collapsed request may finish and populate cache without reopening its row. The table aborts superseded and unmounted requests and ignores completions from older request generations. Set `expansionResetKey` to a new string or number whenever a different dataset may reuse row IDs; this clears expansion state and cache without resetting sorting or pagination. See [contracts](docs/CONTRACTS.md) for the full ownership rules.
-
-## Setup
-
-Use Node.js 22.12 or newer and npm. From the repository root:
+React 19, strict TypeScript, Vite, Tailwind CSS, React Router, and Heroicons via the design layer. Tests use Vitest, React Testing Library, and user-event. Use Node.js 22.12 or newer and npm:
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite (normally `http://localhost:5173`). No environment variables are needed.
-
-## Commands
+Open the URL printed by Vite, usually `http://localhost:5173`.
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start Vite locally |
-| `npm run lint` | Run ESLint |
-| `npm run typecheck` | Run strict TypeScript checks |
-| `npm test` | Run Vitest once |
-| `npm run test:watch` | Watch tests |
-| `npm run build` | Typecheck and build `dist/` |
-| `npm run format` | Format code and configuration |
-| `npm run format:check` | Check formatting |
-| `npm run validate` | Run lint, typecheck, tests, and build |
+| `npm run dev` | Local Vite server |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | Strict TypeScript check |
+| `npm test` | Automated suite |
+| `npm run build` | Typecheck and production build |
+| `npm run format:check` | Prettier check |
+| `npm run validate` | Lint, typecheck, test, build |
 
-## Architecture summary
+## DataTable API and behavior
 
-The app lives in `src/app/`; the timetable feature is in `src/features/class-timetable/`; reusable UI and the DataTable are in `src/components/`; CSS tokens and Heroicon exports are in `src/design/`; deterministic mock transport is in `src/core/api/`; tests are in `src/tests/`. The route imports only the feature root API. See [architecture](docs/ARCHITECTURE.md).
+`DataTable<TRow, TChild>` accepts typed `ColumnDef<TRow>[]`, `data`, and a stable `getRowId`. Every column has an `id` and header. `accessorKey` reads a row property; `accessor` derives a value; `cell` renders custom content. A column may define sorting, width, and left pinning. The class and user features provide their own formatting and child renderers; the table contains no domain models.
 
-## Testing
+Client mode sorts the full dataset stably, then slices the requested page. Header clicks cycle unsorted → ascending → descending → unsorted. The Class Timetable uses this mode. In controlled/manual mode the table emits sort and pagination proposals and renders the supplied server page without sorting or slicing it again. The User Directory hook owns `SortingState` and zero-based `PaginationState`; its service maps allowed column IDs to comparators, sorts the full 72-user fixture, and returns `{ items, totalCount }`. It converts `pageIndex + 1` at the request boundary, resets to page 1 on sort or size changes, and aborts stale requests.
 
-Foundation, DataTable core, rendered table, expansion behavior, and timetable integration are tested with Vitest and React Testing Library. Browser observations are recorded in [test and UAT](docs/TEST-UAT.md).
+Expansion supports inline `getChildren` and on-demand `loadChildren(row, signal)`. Both use typed `renderChildren` and may supply `renderEmpty` for successful zero-child results. On-demand rows have local loading, error, and retry states; successful results are cached by stable row ID. Aborted or superseded responses cannot replace current state. The Class Timetable uses both modes; the User Directory uses on-demand activity. The first data cell contains the expansion toggle, and detail rows span the table width.
 
-## Tradeoffs
+Left-pinned cells use cumulative width offsets, opaque backgrounds, and a boundary shadow. Tables scroll horizontally at narrow widths. Sorting, pagination, and expansion state are local to each table or its owning feature hook; a global state library would add no useful coordination here.
 
-Project decisions: [decision record](docs/DECISIONS.md). The core public contracts are in [DataTable contracts](docs/CONTRACTS.md).
+## Accessibility, testing, and performance
 
-## Live URL
+The table uses semantic markup, native buttons and page-size selects, keyboard operation, visible focus, `aria-sort`, `aria-expanded`, stable `aria-controls`, text status labels, and reduced-motion styling. The automated suite covers generic behavior and both feature integrations. [Test and UAT](docs/TEST-UAT.md) records browser observations and any verification limits.
 
-None. Deployment is a later phase.
+The optional `/?fixture=stress` dataset exercises 5,000 parent rows with the regular page size of five. In local Chromium at desktop and narrow widths, full-dataset sorting, pagination, and horizontal scrolling remained responsive with only five parent rows rendered per page. No virtualization or speculative memoization was needed. This is a manual stress observation, not a numeric performance guarantee.
 
-## Documentation
+## Architecture and tradeoffs
 
-- [Requirements](docs/REQUIREMENTS.md)
-- [Engineering laws](docs/LAWS.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [DataTable contracts](docs/CONTRACTS.md)
-- [Test and UAT plan](docs/TEST-UAT.md)
-- [Decisions](docs/DECISIONS.md)
-- [Deployment plan](docs/DEPLOY.md)
+`src/app/` owns routing; `src/features/class-timetable/` and `src/features/users-demo/` own domain UI, hooks, services, and fixtures; `src/components/data-table/` owns generic mechanics; `src/design/` owns tokens and icons; `src/core/api/` owns mock transport. Each feature exposes one root entry point. See [architecture](docs/ARCHITECTURE.md), [contracts](docs/CONTRACTS.md), [requirements](docs/REQUIREMENTS.md), and [decisions](docs/DECISIONS.md).
+
+The mocked service demonstrates server-style ownership without a backend. The class view has separate inline and on-demand tables because the public expansion configuration selects one mode per table. Pagination bounds rendering rather than introducing virtualization. Dates and fixtures are deterministic to keep review and tests repeatable.

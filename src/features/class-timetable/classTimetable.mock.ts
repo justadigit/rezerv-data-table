@@ -114,3 +114,16 @@ export function rosterForClass(session: ClassSession): readonly Attendee[] {
   const start = Number(session.id.slice(-2)) % 5;
   return attendees.slice(start, start + session.attendeeCount);
 }
+
+let stressClasses: readonly ClassSession[] | undefined;
+
+export function getStressClasses(): readonly ClassSession[] {
+  stressClasses ??= Array.from({ length: 5000 }, (_, index) => ({
+    ...CLASS_SESSIONS[index % 20]!,
+    id: `stress-class-${String(index + 1).padStart(4, "0")}`,
+    className: `Studio Session ${String(index + 1).padStart(4, "0")}`,
+    attendeeMode: "inline" as const,
+    attendees: [],
+  }));
+  return stressClasses;
+}
