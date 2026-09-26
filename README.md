@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Phase 4 adds a generic row-expansion engine to the rendered DataTable. The assessment's domain features remain future work.
+Phase 5 implements the fitness studio Class Timetable with the existing generic DataTable. The official second dataset and deployment remain future work.
 
 ## Assessment scope
 
@@ -14,11 +14,15 @@ React, strict TypeScript, Vite, Tailwind CSS, React Router, and Heroicons throug
 
 ## Implemented features
 
-Foundation plus the generic DataTable core and rendered component: semantic table markup, sortable button headers, client and manual pagination controls, column-aligned loading skeletons, generic error/empty states, multiple left-pinned columns, and horizontal scrolling. Inline expansion renders caller-supplied children; on-demand expansion uses row-local loading, success, empty, error, and retry states. Successful and empty results are cached by default, request generations reject stale completions, and active requests abort on reset or unmount. Expansion buttons are native keyboard controls with `aria-expanded` and stable detail IDs. The class timetable, attendee views, and official second dataset are not implemented yet.
+The generic DataTable provides semantic markup, sortable button headers, client and manual pagination controls, column-aligned loading skeletons, error/empty states, left-pinned columns, and horizontal scrolling. Inline expansion renders caller-supplied children; on-demand expansion has row-local loading, success, empty, error, retry, and default success caching. Expansion buttons are native keyboard controls with `aria-expanded` and stable detail IDs. The Class Timetable uses this public API without changing DataTable internals.
+
+The timetable contains 28 deterministic classes: 20 with inline attendees and 8 with on-demand rosters. Its columns are Class (pinned), Instructor, Start time, Duration, Attendance, and Status. Relevant columns use client sorting, including a feature-owned status comparator; both sections use client pagination. Attendee details show names, email, membership, and text check-in state. Class, Attendee, and status types, fixtures, formatting, data access, and error normalization live in `src/features/class-timetable/`.
 
 ## Routes and demo pages
 
-`/` is the future class timetable route and remains a foundation placeholder. `/demo` contains temporary neutral rows and explicit expansion scenarios for visual checks; it is not the official second dataset demo.
+`/` is the Class Timetable. Its main **Class schedule** section demonstrates inline expansion and its smaller **Live rosters** section demonstrates on-demand expansion. The generic API accepts one expansion mode per table, so the two sections share the same class model and column definitions. `/demo` remains an internal neutral DataTable preview; it is not the official second dataset.
+
+The initial class request has a 450 ms mock delay so the table skeleton is visible. Open `/?fixture=error` for a deterministic initial failure and use **Retry loading classes** to recover. Open `/?fixture=empty` for an empty parent table. The normal route shows success. In Live rosters, **Power Vinyasa** loads successfully, **Boxing Basics** has an empty roster, **Mobility Lab** fails once and succeeds on retry, and **HIIT Express** has a slower request. The generic DataTable owns empty-detail rendering, so empty rosters currently use its generic “No details available” message; the locked expansion API does not pass zero children to the feature renderer.
 
 ## Expansion API
 
@@ -53,11 +57,11 @@ Open the local URL printed by Vite (normally `http://localhost:5173`). No enviro
 
 ## Architecture summary
 
-The app lives in `src/app/`; reusable UI and the DataTable are in `src/components/`; CSS tokens and Heroicon exports are in `src/design/`; mock transport is in `src/core/api/`; test support is in `src/tests/`. Feature modules will be added when their behavior is implemented. See [architecture](docs/ARCHITECTURE.md).
+The app lives in `src/app/`; the timetable feature is in `src/features/class-timetable/`; reusable UI and the DataTable are in `src/components/`; CSS tokens and Heroicon exports are in `src/design/`; deterministic mock transport is in `src/core/api/`; tests are in `src/tests/`. The route imports only the feature root API. See [architecture](docs/ARCHITECTURE.md).
 
 ## Testing
 
-Foundation, DataTable core, rendered table, and expansion behavior are tested with Vitest and React Testing Library. Browser observations are recorded in [test and UAT](docs/TEST-UAT.md).
+Foundation, DataTable core, rendered table, expansion behavior, and timetable integration are tested with Vitest and React Testing Library. Browser observations are recorded in [test and UAT](docs/TEST-UAT.md).
 
 ## Tradeoffs
 

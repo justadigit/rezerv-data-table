@@ -5,14 +5,14 @@
 ## Required by the assessment
 
 - [x] **R01** Build a reusable, fully typed React/TypeScript DataTable from scratch, driven by column definitions, with no table/grid library. Mock JSON or mocked API calls suffice; no backend is required.
-- [ ] **R02** Render a fitness studio class timetable as a self-contained SaaS dashboard view. Parent rows are classes; child rows are attendees. The component itself remains generic.
+- [x] **R02** Render a fitness studio class timetable as a self-contained SaaS dashboard view. Parent rows are classes; child rows are attendees. The component itself remains generic.
 - [x] **R03** Provide columns with at least key/accessor, header label, custom cell render, sortable flag, width, and pinned flag. The project contract distinguishes column `id` from direct `accessorKey` and derived `accessor` (see [contracts](CONTRACTS.md)). The suggested class, instructor, time, attendance, and status columns may be adjusted.
 - [x] **R04** Implement client-side sorting from header interaction with ascending, descending, and unsorted states.
 - [x] **R05** Implement client-side pagination with page-size selection and page navigation over the full dataset.
-- [ ] **R06** Support both expansion modes using attendee data in the class scenario: children supplied with a parent and children fetched on demand when expanded. Give the on-demand row its own loading and sensible fetch-error state.
+- [x] **R06** Support both expansion modes using attendee data in the class scenario: children supplied with a parent and children fetched on demand when expanded. Give the on-demand row its own loading and sensible fetch-error state.
 - [x] **R07** Render expanded content below its parent across the table width, with a smooth expand/collapse transition.
 - [x] **R08** Keep at least one left column pinned during horizontal scrolling, with a shadow or divider when content scrolls beneath it.
-- [ ] **R09** Show column-aligned skeleton rows while table data loads, plus loading, empty, and error states consistent with the dashboard.
+- [x] **R09** Show column-aligned skeleton rows while table data loads, plus loading, empty, and error states consistent with the dashboard.
 - [ ] **R10** Demonstrate the same table on a second differently shaped dataset without hard-coding either data shape. The assessment asks that demo to showcase server-side/on-demand modes, despite labeling server-side sort and pagination as bonus features; see the priority note below.
 - [x] **R11** Use React.js or Next.js and TypeScript. The locked project choice is React + strict TypeScript + Vite + Tailwind CSS + Heroicons through the design layer.
 
@@ -34,9 +34,9 @@
 
 ## UI / UX
 
-- [ ] **R20** Use clean SaaS-style spacing and visual hierarchy.
-- [ ] **R21** Provide hover states for rows and interactive headers, plus subtle sort and expand/collapse transitions.
-- [ ] **R22** Adapt gracefully across desktop, tablet, and mobile; horizontal scrolling with a pinned column is an allowed approach.
+- [x] **R20** Use clean SaaS-style spacing and visual hierarchy.
+- [x] **R21** Provide hover states for rows and interactive headers, plus subtle sort and expand/collapse transitions.
+- [x] **R22** Adapt gracefully across desktop, tablet, and mobile; horizontal scrolling with a pinned column is an allowed approach.
 
 ## Performance
 

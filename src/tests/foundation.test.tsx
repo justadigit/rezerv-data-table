@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import { App } from "@/app/App";
 import { Button } from "@/components/ui/button";
 
-describe("foundation routes", () => {
-  it("renders the timetable placeholder and navigates to the temporary table preview", async () => {
+describe("app routes", () => {
+  it("renders the class timetable and navigates to the internal table preview", async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -15,43 +15,16 @@ describe("foundation routes", () => {
     );
 
     expect(
-      screen.getByRole("heading", { name: "Class timetable route" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Class timetable implementation is pending/),
+      screen.getByRole("heading", { name: "Class Timetable" }),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("link", { name: "Reuse demo route" }));
+    await user.click(
+      screen.getByRole("link", { name: "Internal table preview" }),
+    );
     expect(
       screen.getByRole("heading", { name: "Reusable DataTable" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
-  });
-
-  it("shows accessible foundation primitives and responds to keyboard activation", async () => {
-    const user = userEvent.setup();
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <App />
-      </MemoryRouter>,
-    );
-
-    expect(
-      screen.getByRole("heading", { name: "Feature content is pending" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent("Error state preview");
-    expect(
-      screen.getByRole("status", { name: "Skeleton preview" }),
-    ).toBeInTheDocument();
-
-    const button = screen.getByRole("button", {
-      name: "Show foundation status",
-    });
-    button.focus();
-    await user.keyboard("{Enter}");
-    expect(
-      screen.getByText("Foundation preview is working."),
-    ).toBeInTheDocument();
   });
 });
 

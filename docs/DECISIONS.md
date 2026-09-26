@@ -27,5 +27,6 @@ Decisions are project choices, not claims that the assessment mandates them. Beh
 | D21 | Numeric, `Intl.Collator`, and timestamp defaults; nullish last | Defines predictable v1 sorting while allowing column comparators for complex values. |
 | D22 | Manual pagination requires manual sorting | A supplied server page cannot be correctly sorted as though it were the full dataset. |
 | D23 | Explicit `expansionResetKey` for dataset changes | Row IDs alone cannot reveal whether a new source reuses semantic IDs; a caller-owned key gives cache invalidation a clear, small boundary. |
+| D24 | Two labeled timetable sections over one class model | The locked expansion contract selects one mode per table. An inline schedule and smaller on-demand roster section demonstrate both modes without domain branching in DataTable. Query fixtures `?fixture=error` and `?fixture=empty` expose initial states without a developer control panel. |
 
 Revisit a decision only when a concrete assessment or technical conflict is documented. Do not silently change the locked stack or boundaries.
