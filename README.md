@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Phase 1 provides a runnable foundation for the Part 2 class timetable and reusable DataTable. The assessment features have not been implemented.
+Phase 2 adds the typed, domain-independent DataTable core beneath the runnable foundation. Table rendering and assessment features have not been implemented.
 
 ## Assessment scope
 
@@ -14,11 +14,11 @@ React, strict TypeScript, Vite, Tailwind CSS, React Router, and Heroicons throug
 
 ## Implemented features
 
-Foundation only: route placeholders, centralized visual tokens and icons, four reusable UI primitives, and deterministic mock transport. The DataTable, class timetable, attendee views, and second dataset do not exist yet.
+Foundation plus the DataTable core: generic types, column access, sorting, pagination, controlled-state support, row-ID validation, and a pure client processing pipeline. Route placeholders, visual tokens, four UI primitives, and mock transport remain available. The rendered DataTable, class timetable, attendee views, and second dataset do not exist yet.
 
 ## Routes and demo pages
 
-`/` is the future class timetable route; `/demo` is the future second-dataset route. Both currently render clearly labeled Phase 1 placeholders.
+`/` is the future class timetable route; `/demo` is the future second-dataset route. Both still render clearly labeled foundation placeholders.
 
 ## Setup
 
@@ -47,15 +47,15 @@ Open the local URL printed by Vite (normally `http://localhost:5173`). No enviro
 
 ## Architecture summary
 
-The current app lives in `src/app/`; reusable UI is in `src/components/ui/`; CSS tokens and Heroicon exports are in `src/design/`; mock transport is in `src/core/api/`; test support is in `src/tests/`. Feature modules will be added when their behavior is implemented. See [architecture](docs/ARCHITECTURE.md).
+The app lives in `src/app/`; reusable UI and the DataTable core are in `src/components/`; CSS tokens and Heroicon exports are in `src/design/`; mock transport is in `src/core/api/`; test support is in `src/tests/`. Feature modules will be added when their behavior is implemented. See [architecture](docs/ARCHITECTURE.md).
 
 ## Testing
 
-Foundation behavior is tested with Vitest, React Testing Library, and user-event. DataTable acceptance remains planned in [test and UAT](docs/TEST-UAT.md).
+Foundation and DataTable core behavior are tested with Vitest and React Testing Library. Rendered table interaction and visual acceptance remain planned in [test and UAT](docs/TEST-UAT.md).
 
 ## Tradeoffs
 
-Foundation decisions: [decision record](docs/DECISIONS.md). DataTable implementation tradeoffs remain open.
+Project decisions: [decision record](docs/DECISIONS.md). The core public contracts are in [DataTable contracts](docs/CONTRACTS.md).
 
 ## Live URL
 

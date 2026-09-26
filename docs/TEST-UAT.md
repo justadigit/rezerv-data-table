@@ -1,6 +1,8 @@
 # Test and user acceptance plan
 
-The Phase 1 application and test runner exist; DataTable checks remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
+The Phase 2 DataTable core has automated tests for value access, pure sorting and pagination, state ownership, processing order, and row identity. UI interaction and manual browser checks below remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
+
+Core coverage lives in `src/tests/data-table/`. The tests prove the underlying state transitions and processing, including sorting before pagination; they do not claim that header clicks, controls, ARIA, expansion, or visual states are implemented.
 
 | Check | Mode | Requirement | Acceptance result |
 | --- | --- | --- | --- |

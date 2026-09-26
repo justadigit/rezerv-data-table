@@ -4,7 +4,7 @@ This document owns generic table behavior. It specifies outcomes, not implementa
 
 ## Generic API and identity
 
-The table is generic in `TRow` and `TChild`; child shape may differ from the parent. Public concepts include `DataTableProps<TRow, TChild>`, `ColumnDef<TRow>`, `SortingState`, `PaginationState`, and `ExpansionConfig<TRow, TChild>`. Feature models never appear in the generic module.
+The table is generic in `TRow` and `TChild`; child shape may differ from the parent. The Phase 2 public entry point exports `DataTableProps<TRow, TChild>`, `ColumnDef<TRow>`, `CellContext<TRow>`, `RowId`, `SortDirection`, `SortingState`, `PaginationState`, and `ExpansionConfig<TRow, TChild>`. Feature models never appear in the generic module. Core prop names are `data`, `columns`, `getRowId`, `sorting`/`defaultSorting`, `onSortingChange`, `pagination`/`defaultPagination`, `onPaginationChange`, `manualSorting`, `manualPagination`, `totalCount`, `pageSizeOptions`, `loading`, `error`, and `expansion`. Controlled values require their change callbacks. Manual sorting requires parent-owned sorting and its callback; manual pagination also requires parent-owned pagination, `totalCount`, and `manualSorting: true` so a current server page cannot be sorted as a full dataset.
 
 The caller supplies `getRowId(row)`, returning a stable string or number unique across the active dataset and across server pages. This ID keys rendering, expansion, async status, and cache. Array indexes are never identities. Changing a row's semantic ID is treated as a new row. Duplicate IDs violate the caller contract; development builds should surface a clear diagnostic rather than silently mixing row states.
 
@@ -22,7 +22,7 @@ accessor?: (row: TRow) => unknown;
 
 ## Sorting
 
-`SortingState` represents either no sort (`null`) or one `{ columnId, direction }` with `direction` `asc` or `desc`. `columnId` matches a column's `id`, not its `accessorKey`. The same sortable header cycles `null → asc → desc → null`; a different sortable header starts at `asc`. Client sorting is stable for equal values and does not mutate the input array. The v1 default comparator uses numeric comparison for numbers, timestamp comparison for `Date` values, and `Intl.Collator` with numeric-friendly, case-insensitive behavior for strings. Nullish values sort after non-null values in either direction. A column-level comparator handles complex or derived values when these defaults are unsuitable. An unknown current `columnId` resolves to an unsorted display in client mode without a crash or destructive parent-state update.
+`SortingState` represents either no sort (`null`) or one `{ columnId, direction }` with `direction` `asc` or `desc`. `columnId` matches a column's `id`, not its `accessorKey`. The same sortable header cycles `null → asc → desc → null`; a different sortable header starts at `asc`. Client sorting is stable for equal values and does not mutate the input array. The v1 default comparator uses numeric comparison for numbers, timestamp comparison for `Date` values, and `Intl.Collator` with numeric-friendly, case-insensitive behavior for strings. Nullish values sort after non-null values in either direction. A column-level row comparator takes precedence for complex or derived values when these defaults are unsuitable. Unsupported or mixed non-null value types preserve source order and yield no effective client sort. An unknown current `columnId` likewise resolves to an unsorted display in client mode without a crash or destructive parent-state update.
 
 ```ts
 export type SortingState = {
@@ -46,7 +46,7 @@ export type PaginationState = {
 
 In controlled/manual mode, the parent owns supplied sorting and pagination values and provides already processed page data and total parent-row count. The table emits proposed changes through callbacks and renders the latest supplied values; it does not sort or repaginate server-style input. If the parent does not accept a proposal, the visual state stays unchanged. Reset proposals on sort or page-size change include `pageIndex = 0`, but do not secretly alter the controlled `pageIndex`. For an out-of-range controlled `pageIndex`, render the parent-supplied rows and index as given, with navigation boundaries derived from the supplied total; the parent is responsible for reconciliation. The table must not double paginate already paged data.
 
-Controlledness is explicit per state slice: a provided value and callback form a controlled slice; an omitted value uses internal state. Mixed ownership is allowed only if the processing mode remains unambiguous. Manual mode requires parent-provided total count and processed rows. The precise prop spelling will be fixed in Phase 1; behavior must remain as above.
+Controlledness is explicit per state slice: a provided value and callback form a controlled slice; an omitted value uses internal state. Mixed ownership is allowed only if the processing mode remains unambiguous. Manual mode requires parent-provided total count and processed rows. The Phase 2 prop spelling above is the public type contract; rendering begins later.
 
 ## Expansion and row-local asynchronous state
 

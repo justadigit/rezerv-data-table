@@ -25,5 +25,6 @@ Decisions are project choices, not claims that the assessment mandates them. Beh
 | D19 | Deterministic, abortable mock transport in `core/api/` | Supports later feature services without domain data or random test outcomes. |
 | D20 | Manual performance fixture of 5,000 parent rows | Provides a repeatable stress baseline without implying production capacity. |
 | D21 | Numeric, `Intl.Collator`, and timestamp defaults; nullish last | Defines predictable v1 sorting while allowing column comparators for complex values. |
+| D22 | Manual pagination requires manual sorting | A supplied server page cannot be correctly sorted as though it were the full dataset. |
 
 Revisit a decision only when a concrete assessment or technical conflict is documented. Do not silently change the locked stack or boundaries.
