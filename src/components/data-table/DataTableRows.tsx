@@ -1,4 +1,12 @@
-import { Fragment, useId, type CSSProperties } from "react";
+import {
+  Fragment,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -36,6 +44,84 @@ export function DataTableRows<TRow, TChild>({
 }: Props<TRow, TChild>) {
   const { expandedIds, loadStates, toggle, retry } = useRowExpansion(expansion);
   const instanceId = useId();
+  const [closingIds, setClosingIds] = useState<Set<RowId>>(() => new Set());
+  const closingTimers = useRef(new Map<RowId, number>());
+  const expandedRef = useRef(expandedIds);
+
+  useEffect(() => {
+    expandedRef.current = expandedIds;
+  }, [expandedIds]);
+
+  useEffect(() => {
+    const timers = closingTimers.current;
+    return () => {
+      for (const timer of timers.values()) window.clearTimeout(timer);
+      timers.clear();
+    };
+  }, []);
+
+  function clearClosingTimer(rowId: RowId) {
+    const timer = closingTimers.current.get(rowId);
+    if (timer !== undefined) window.clearTimeout(timer);
+    closingTimers.current.delete(rowId);
+  }
+
+  function finishClosing(rowId: RowId) {
+    if (expandedRef.current.has(rowId)) return;
+    clearClosingTimer(rowId);
+    setClosingIds((current) => {
+      const next = new Set(current);
+      next.delete(rowId);
+      return next;
+    });
+  }
+
+  function motionDurationMs() {
+    const value = getComputedStyle(document.documentElement)
+      .getPropertyValue("--rz-motion-normal")
+      .trim();
+    const match = /^(\d+(?:\.\d+)?)(ms|s)$/.exec(value);
+    return match ? Number(match[1]) * (match[2] === "s" ? 1000 : 1) : 0;
+  }
+
+  function toggleWithExit(
+    row: TRow,
+    rowId: RowId,
+    detailId: string,
+    event: MouseEvent<HTMLButtonElement>,
+  ) {
+    if (expandedIds.has(rowId)) {
+      if (document.getElementById(detailId)?.contains(document.activeElement)) {
+        event.currentTarget.focus();
+      }
+      clearClosingTimer(rowId);
+      const reducedMotion =
+        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ??
+        false;
+      const duration = reducedMotion ? 0 : motionDurationMs();
+      if (duration > 0) {
+        setClosingIds((current) => new Set(current).add(rowId));
+        closingTimers.current.set(
+          rowId,
+          window.setTimeout(() => finishClosing(rowId), duration + 50),
+        );
+      } else {
+        setClosingIds((current) => {
+          const next = new Set(current);
+          next.delete(rowId);
+          return next;
+        });
+      }
+    } else {
+      clearClosingTimer(rowId);
+      setClosingIds((current) => {
+        const next = new Set(current);
+        next.delete(rowId);
+        return next;
+      });
+    }
+    toggle(row, rowId);
+  }
 
   function detailContent(
     row: TRow,
@@ -91,6 +177,7 @@ export function DataTableRows<TRow, TChild>({
   return rows.map((row, index) => {
     const rowId = rowIds[index]!;
     const expanded = expandedIds.has(rowId) && expansion !== undefined;
+    const rendered = expanded || closingIds.has(rowId);
     const detailId = `${instanceId}-detail-${encodeURIComponent(`${typeof rowId}:${rowId}`)}`;
     return (
       <Fragment key={`${typeof rowId}:${rowId}`}>
@@ -112,8 +199,10 @@ export function DataTableRows<TRow, TChild>({
                       type="button"
                       aria-label={expanded ? "Collapse row" : "Expand row"}
                       aria-expanded={expanded}
-                      aria-controls={expanded ? detailId : undefined}
-                      onClick={() => toggle(row, rowId)}
+                      aria-controls={rendered ? detailId : undefined}
+                      onClick={(event) =>
+                        toggleWithExit(row, rowId, detailId, event)
+                      }
                       className="inline-flex size-7 shrink-0 items-center justify-center rounded-sm text-muted transition-colors hover:bg-surface-muted hover:text-ink"
                     >
                       <ExpandIcon
@@ -130,17 +219,28 @@ export function DataTableRows<TRow, TChild>({
             );
           })}
         </tr>
-        {expanded ? (
+        {rendered ? (
           <tr className="bg-surface-muted">
-            <td
-              colSpan={columns.length}
-              className="border-b border-line p-4 sm:p-5"
-            >
+            <td colSpan={columns.length} className="border-b border-line p-0">
               <div
-                id={detailId}
-                className="data-table-detail-content data-table-detail-enter"
+                className="data-table-detail-shell"
+                data-open={expanded}
+                onTransitionEnd={(event) => {
+                  if (
+                    event.target === event.currentTarget &&
+                    event.propertyName === "grid-template-rows"
+                  )
+                    finishClosing(rowId);
+                }}
               >
-                {detailContent(row, rowId, loadStates.get(rowId))}
+                <div className="data-table-detail-clip">
+                  <div
+                    id={detailId}
+                    className="data-table-detail-content data-table-detail-enter p-4 sm:p-5"
+                  >
+                    {detailContent(row, rowId, loadStates.get(rowId))}
+                  </div>
+                </div>
               </div>
             </td>
           </tr>

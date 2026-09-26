@@ -10,7 +10,7 @@
 - [x] **R04** Implement client-side sorting from header interaction with ascending, descending, and unsorted states.
 - [x] **R05** Implement client-side pagination with page-size selection and page navigation over the full dataset.
 - [ ] **R06** Support both expansion modes using attendee data in the class scenario: children supplied with a parent and children fetched on demand when expanded. Give the on-demand row its own loading and sensible fetch-error state.
-- [ ] **R07** Render expanded content below its parent across the table width, with a smooth expand/collapse transition.
+- [x] **R07** Render expanded content below its parent across the table width, with a smooth expand/collapse transition.
 - [x] **R08** Keep at least one left column pinned during horizontal scrolling, with a shadow or divider when content scrolls beneath it.
 - [ ] **R09** Show column-aligned skeleton rows while table data loads, plus loading, empty, and error states consistent with the dashboard.
 - [ ] **R10** Demonstrate the same table on a second differently shaped dataset without hard-coding either data shape. The assessment asks that demo to showcase server-side/on-demand modes, despite labeling server-side sort and pagination as bonus features; see the priority note below.

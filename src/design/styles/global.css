@@ -73,10 +73,30 @@ a {
   animation: data-table-detail-enter var(--rz-motion-normal) ease-out;
 }
 
-.data-table-detail-content {
+.data-table-detail-shell {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows var(--rz-motion-normal) ease,
+    opacity var(--rz-motion-normal) ease;
+}
+
+.data-table-detail-shell[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.data-table-detail-clip {
+  min-height: 0;
+  overflow: hidden;
   position: sticky;
   left: 1rem;
   width: calc(100cqw - 2rem);
+}
+
+.data-table-detail-content {
+  width: 100%;
 }
 
 .data-table-scroll {
@@ -110,5 +130,9 @@ a {
 
   .data-table-detail-enter {
     animation: none;
+  }
+
+  .data-table-detail-shell {
+    transition: none;
   }
 }

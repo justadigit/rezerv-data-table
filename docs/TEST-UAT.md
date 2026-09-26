@@ -76,4 +76,12 @@ Browser: Chromium on local `/demo` at 1280 px, 768 px, and 390 px. Inline mode e
 
 Pinned and responsive: the expander remained in the first pinned cell. At tablet and mobile widths, horizontal scrolling kept pinned headers in place; the detail content remained within the visible scroll area, including at 390 px after a 350 px horizontal scroll. Document width did not exceed the mobile viewport. Keyboard Tab reached the expander with a visible focus outline; Enter and Space changed `aria-expanded`; `aria-controls` pointed to the rendered detail content. Reduced-motion emulation disabled the detail animation. Browser page-error and console checks showed no errors.
 
-The neutral fixture does not count as the class timetable or official second dataset. The CSS provides a short entrance transition and rotating indicator; collapse removes the detail row immediately to preserve simple table semantics. The assessment's full smooth expand/collapse acceptance item remains pending.
+The neutral fixture does not count as the class timetable or official second dataset. At the end of Phase 4, collapse still removed the detail row immediately; Phase 4.1 resolved this as recorded below.
+
+## Phase 4.1 collapse transition verification (2026-09-26)
+
+Automated: six focused regression tests cover immediate logical collapse and ARIA, a temporary closing row, removal on transition end, reduced-motion removal, rapid re-expansion and a second collapse, retained on-demand cache, collapse during loading, and focus returning to the toggle. All 60 tests pass, including the Phase 4 async suite.
+
+Browser: Chromium on `/demo` at 1280 px, 768 px, and 390 px. With normal motion, the detail wrapper height decreased during collapse (60 px to about 21 px at 80–90 ms) and the semantic detail row was then removed. `aria-expanded` became false while the row was closing. Rapid expand/collapse/expand and collapse/expand/collapse sequences left one correctly owned detail row or none, with no stale cleanup or flicker observed. On-demand success retained its cached result; empty and error states closed, and retry still succeeded. A slow loading row closed without reopening when its request completed; later re-expansion used the cached result. The first pinned column and horizontal scroll remained usable at tablet and mobile widths; the detail content stayed within the visible scroll area. The 390 px document width remained 390 px.
+
+Reduced-motion emulation disabled the detail animation and removed the row promptly on collapse. Browser console and page-error checks reported no warnings or errors. The wrapper animates inside a valid `<tr><td colSpan="...">` structure; parent pagination remains unchanged. R07 is complete.

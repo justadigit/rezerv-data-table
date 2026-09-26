@@ -1,6 +1,6 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DataTable,
   type ColumnDef,
@@ -417,5 +417,130 @@ describe("DataTable expansion", () => {
     } finally {
       errorSpy.mockRestore();
     }
+  });
+});
+
+describe("DataTable detail closing transition", () => {
+  beforeEach(() =>
+    document.documentElement.style.setProperty("--rz-motion-normal", "220ms"),
+  );
+  afterEach(() => {
+    document.documentElement.style.removeProperty("--rz-motion-normal");
+    vi.unstubAllGlobals();
+  });
+
+  function completeExit() {
+    const shell = document.querySelector(".data-table-detail-shell")!;
+    fireEvent.transitionEnd(shell, { propertyName: "grid-template-rows" });
+  }
+
+  it("collapses semantically before removing the detail row after transition", () => {
+    render(<DataTable {...base} expansion={inline} />);
+    fireEvent.click(toggleFor("Beta"));
+    const button = toggleFor("Beta");
+    const detailId = button.getAttribute("aria-controls")!;
+    expect(document.getElementById(detailId)).toHaveTextContent("Beta detail");
+    fireEvent.click(button);
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(button).toHaveAttribute("aria-controls", detailId);
+    expect(document.getElementById(detailId)).toBeInTheDocument();
+    expect(document.querySelector(".data-table-detail-shell")).toHaveAttribute(
+      "data-open",
+      "false",
+    );
+    completeExit();
+    expect(document.getElementById(detailId)).toBeNull();
+    expect(button).not.toHaveAttribute("aria-controls");
+  });
+
+  it("removes detail immediately for reduced motion", () => {
+    vi.stubGlobal("matchMedia", vi.fn().mockReturnValue({ matches: true }));
+    render(<DataTable {...base} expansion={inline} />);
+    fireEvent.click(toggleFor("Beta"));
+    const button = toggleFor("Beta");
+    const detailId = button.getAttribute("aria-controls")!;
+    fireEvent.click(button);
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(document.getElementById(detailId)).toBeNull();
+  });
+
+  it("returns focus to the toggle before focused detail content closes", () => {
+    render(
+      <DataTable
+        {...base}
+        expansion={{
+          ...inline,
+          renderChildren: () => <button type="button">Child action</button>,
+        }}
+      />,
+    );
+    const button = toggleFor("Beta");
+    fireEvent.click(button);
+    screen.getByRole("button", { name: "Child action" }).focus();
+    expect(screen.getByRole("button", { name: "Child action" })).toHaveFocus();
+    fireEvent.click(button);
+    expect(button).toHaveFocus();
+    completeExit();
+    expect(button).toHaveFocus();
+  });
+
+  it("ignores stale exit completion during rapid re-expansion and a second collapse", () => {
+    render(<DataTable {...base} expansion={inline} />);
+    const button = toggleFor("Beta");
+    fireEvent.click(button);
+    const detailId = button.getAttribute("aria-controls")!;
+    fireEvent.click(button);
+    fireEvent.click(button);
+    completeExit();
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    expect(document.getElementById(detailId)).toBeInTheDocument();
+    expect(
+      screen.getByRole("table").querySelectorAll("tbody td[colspan]"),
+    ).toHaveLength(1);
+    fireEvent.click(button);
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    completeExit();
+    expect(document.getElementById(detailId)).toBeNull();
+  });
+
+  it("preserves cached on-demand success across animated collapse", async () => {
+    const loadChildren = vi.fn(async () => ["Loaded Beta"]);
+    render(
+      <DataTable
+        {...base}
+        expansion={{ mode: "on-demand", loadChildren, renderChildren }}
+      />,
+    );
+    fireEvent.click(toggleFor("Beta"));
+    expect(await screen.findByText("Loaded Beta")).toBeInTheDocument();
+    fireEvent.click(toggleFor("Beta"));
+    expect(toggleFor("Beta")).toHaveAttribute("aria-expanded", "false");
+    completeExit();
+    expect(screen.queryByText("Loaded Beta")).not.toBeInTheDocument();
+    fireEvent.click(toggleFor("Beta"));
+    expect(screen.getByText("Loaded Beta")).toBeInTheDocument();
+    expect(loadChildren).toHaveBeenCalledTimes(1);
+  });
+
+  it("finishes closing during loading without reopening when the request resolves", async () => {
+    const pending = deferred<readonly string[]>();
+    const loadChildren = vi.fn(() => pending.promise);
+    render(
+      <DataTable
+        {...base}
+        expansion={{ mode: "on-demand", loadChildren, renderChildren }}
+      />,
+    );
+    fireEvent.click(toggleFor("Beta"));
+    expect(screen.getByRole("status")).toHaveTextContent("Loading details");
+    fireEvent.click(toggleFor("Beta"));
+    expect(toggleFor("Beta")).toHaveAttribute("aria-expanded", "false");
+    completeExit();
+    await act(async () => pending.resolve(["Cached after close"]));
+    expect(toggleFor("Beta")).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByText("Cached after close")).not.toBeInTheDocument();
+    fireEvent.click(toggleFor("Beta"));
+    expect(screen.getByText("Cached after close")).toBeInTheDocument();
+    expect(loadChildren).toHaveBeenCalledTimes(1);
   });
 });
