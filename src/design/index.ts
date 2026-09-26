@@ -1,1 +1,9 @@
-export { AlertIcon, ForwardIcon, ModulesIcon, SuccessIcon } from "./icons";
+export {
+  AlertIcon,
+  ForwardIcon,
+  ModulesIcon,
+  SuccessIcon,
+  SortIcon,
+  SortAscendingIcon,
+  SortDescendingIcon,
+} from "./icons";

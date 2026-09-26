@@ -1,8 +1,8 @@
 # Test and user acceptance plan
 
-The Phase 2 DataTable core has automated tests for value access, pure sorting and pagination, state ownership, processing order, and row identity. UI interaction and manual browser checks below remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
+The Phase 2 DataTable core has automated tests for value access, pure sorting and pagination, state ownership, processing order, and row identity. Phase 3 adds rendered-component tests and browser checks for the table UI. Expansion, feature, stress, and deployment checks remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
 
-Core coverage lives in `src/tests/data-table/`. The tests prove the underlying state transitions and processing, including sorting before pagination; they do not claim that header clicks, controls, ARIA, expansion, or visual states are implemented.
+Core coverage lives in `src/tests/data-table/`. The tests cover sorting before pagination plus rendered header buttons and ARIA, value and cell rendering, table states, pagination, controlled proposals, keyboard activation, and static pin offsets. jsdom does not prove real browser sticky behavior; expansion remains pending.
 
 | Check | Mode | Requirement | Acceptance result |
 | --- | --- | --- | --- |
@@ -57,3 +57,13 @@ Core coverage lives in `src/tests/data-table/`. The tests prove the underlying s
 6. Before release, run lint, strict typecheck, automated tests, and production build; then smoke-test the deployed URL.
 
 The assessment does not set a numeric performance budget. The 5,000-row fixture is a representative project stress check, not a production capacity claim; record the test environment before judging it.
+
+## Phase 3 verification (2026-09-26)
+
+Automated: nine rendered DataTable tests in `src/tests/data-table/rendering.test.tsx` pass for semantics, cells, sorting, state precedence, pagination, controlled manual mode, keyboard activation, and pin offsets/diagnostics. The existing foundation route test now checks the temporary preview.
+
+Browser: Chromium through agent-browser on the local Vite `/demo` route. Desktop (1280 px): table, sort, page navigation, loading skeleton, error, and empty views rendered; horizontal scroll moved while the two pinned headers stayed at fixed x positions. Tablet (768 px): scroll area was wider than its container, first pinned header remained at container edge, and pagination stayed inside the viewport. Mobile (390 px): document width remained 390 px, table area scrolled horizontally, two pinned headers stayed at fixed offsets, the boundary cue appeared after scrolling, and pagination wrapped within the card. The narrow preview leaves a limited strip for unpinned content, so users scroll that content horizontally.
+
+Keyboard: Tab reached sortable buttons with a visible solid focus outline; Enter and Space activated sorting and updated `aria-sort`. Tab reached the native page-size select and pagination buttons. The native select was exercised by the automated interaction test; the browser CLI's ArrowDown sequence did not change its value, so manual keyboard selection remains unconfirmed. Reduced-motion emulation disabled skeleton animation. Browser console and page-error checks reported no errors.
+
+These Phase 3 observations use neutral preview rows and do not complete the class timetable, real second dataset, expansion, 5,000-row stress, or deployed-site checks.

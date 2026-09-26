@@ -6,7 +6,7 @@ import { App } from "@/app/App";
 import { Button } from "@/components/ui/button";
 
 describe("foundation routes", () => {
-  it("renders the timetable placeholder and navigates to the demo placeholder", async () => {
+  it("renders the timetable placeholder and navigates to the temporary table preview", async () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter initialEntries={["/"]}>
@@ -23,11 +23,9 @@ describe("foundation routes", () => {
 
     await user.click(screen.getByRole("link", { name: "Reuse demo route" }));
     expect(
-      screen.getByRole("heading", { name: "Reusable table demo route" }),
+      screen.getByRole("heading", { name: "Reusable DataTable" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Second dataset implementation is pending/),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("table")).toBeInTheDocument();
   });
 
   it("shows accessible foundation primitives and responds to keyboard activation", async () => {

@@ -65,6 +65,10 @@ a {
     alternate;
 }
 
+.data-table-pin-boundary {
+  box-shadow: 2px 0 4px -2px rgb(23 32 51 / 20%);
+}
+
 @keyframes foundation-pulse {
   from {
     opacity: 0.55;

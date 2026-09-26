@@ -8,3 +8,4 @@ export type {
   SortDirection,
   SortingState,
 } from "./dataTable.type";
+export { DataTable } from "./DataTable";

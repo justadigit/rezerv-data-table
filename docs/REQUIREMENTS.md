@@ -6,12 +6,12 @@
 
 - [ ] **R01** Build a reusable, fully typed React/TypeScript DataTable from scratch, driven by column definitions, with no table/grid library. Mock JSON or mocked API calls suffice; no backend is required.
 - [ ] **R02** Render a fitness studio class timetable as a self-contained SaaS dashboard view. Parent rows are classes; child rows are attendees. The component itself remains generic.
-- [ ] **R03** Provide columns with at least key/accessor, header label, custom cell render, sortable flag, width, and pinned flag. The project contract distinguishes column `id` from direct `accessorKey` and derived `accessor` (see [contracts](CONTRACTS.md)). The suggested class, instructor, time, attendance, and status columns may be adjusted.
-- [ ] **R04** Implement client-side sorting from header interaction with ascending, descending, and unsorted states.
-- [ ] **R05** Implement client-side pagination with page-size selection and page navigation over the full dataset.
+- [x] **R03** Provide columns with at least key/accessor, header label, custom cell render, sortable flag, width, and pinned flag. The project contract distinguishes column `id` from direct `accessorKey` and derived `accessor` (see [contracts](CONTRACTS.md)). The suggested class, instructor, time, attendance, and status columns may be adjusted.
+- [x] **R04** Implement client-side sorting from header interaction with ascending, descending, and unsorted states.
+- [x] **R05** Implement client-side pagination with page-size selection and page navigation over the full dataset.
 - [ ] **R06** Support both expansion modes using attendee data in the class scenario: children supplied with a parent and children fetched on demand when expanded. Give the on-demand row its own loading and sensible fetch-error state.
 - [ ] **R07** Render expanded content below its parent across the table width, with a smooth expand/collapse transition.
-- [ ] **R08** Keep at least one left column pinned during horizontal scrolling, with a shadow or divider when content scrolls beneath it.
+- [x] **R08** Keep at least one left column pinned during horizontal scrolling, with a shadow or divider when content scrolls beneath it.
 - [ ] **R09** Show column-aligned skeleton rows while table data loads, plus loading, empty, and error states consistent with the dashboard.
 - [ ] **R10** Demonstrate the same table on a second differently shaped dataset without hard-coding either data shape. The assessment asks that demo to showcase server-side/on-demand modes, despite labeling server-side sort and pagination as bonus features; see the priority note below.
 - [x] **R11** Use React.js or Next.js and TypeScript. The locked project choice is React + strict TypeScript + Vite + Tailwind CSS + Heroicons through the design layer.
@@ -28,9 +28,9 @@
 - [ ] **R14** Handle empty parent data and empty child lists.
 - [ ] **R15** Handle failed initial data fetch and failed on-demand child fetch.
 - [ ] **R16** Show loading feedback for slow initial and child fetches.
-- [ ] **R17** Keep the left-pinned column usable on narrow/mobile viewports.
+- [x] **R17** Keep the left-pinned column usable on narrow/mobile viewports.
 - [ ] **R18** Keep interactions smooth with a larger dataset, including sorting and scrolling.
-- [ ] **R19** Handle an invalid sort key (unknown `columnId` in the project contract) and an out-of-range page safely.
+- [x] **R19** Handle an invalid sort key (unknown `columnId` in the project contract) and an out-of-range page safely.
 
 ## UI / UX
 

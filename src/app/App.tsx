@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router";
 import { AppLayout } from "./layouts/AppLayout";
 import { FoundationPage } from "./routes/FoundationPage";
+import { DataTablePreviewPage } from "./routes/DataTablePreviewPage";
 
 export function App() {
   return (
@@ -15,15 +16,7 @@ export function App() {
             />
           }
         />
-        <Route
-          path="demo"
-          element={
-            <FoundationPage
-              routeName="Reusable table demo route"
-              plannedFeature="Second dataset"
-            />
-          }
-        />
+        <Route path="demo" element={<DataTablePreviewPage />} />
       </Route>
     </Routes>
   );

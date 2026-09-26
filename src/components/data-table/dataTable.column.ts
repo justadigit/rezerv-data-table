@@ -21,6 +21,9 @@ export function isSortableColumn<TRow>(column: ColumnDef<TRow>): boolean {
 export function validateColumns<TRow>(
   columns: readonly ColumnDef<TRow>[],
 ): void {
+  if (columns.length === 0) {
+    throw new Error("DataTable requires at least one column");
+  }
   const ids = new Set<string>();
   for (const column of columns) {
     if (!column.id || ids.has(column.id)) {

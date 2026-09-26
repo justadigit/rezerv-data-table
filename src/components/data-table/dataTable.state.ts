@@ -7,9 +7,9 @@ export function useControllableState<T>({
   defaultValue,
   onChange,
 }: {
-  value?: T;
+  value?: T | undefined;
   defaultValue: T;
-  onChange?: (next: T) => void;
+  onChange?: ((next: T) => void) | undefined;
 }): readonly [T, (next: T) => void] {
   const [internal, setInternal] = useState(defaultValue);
   const controlled = value !== undefined;
