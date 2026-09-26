@@ -16,7 +16,7 @@ The project is a Vite single-page app with routes `/` and `/demo`. `vercel.json`
 
 ## Verified delivery
 
-The public repository is [justadigit/rezerv-data-table](https://github.com/justadigit/rezerv-data-table). An unauthenticated GitHub page load showed the repository as Public and its eight-commit history.
+The public repository is [justadigit/rezerv-data-table](https://github.com/justadigit/rezerv-data-table). An unauthenticated GitHub page load showed the repository as Public and the preserved project history.
 
 The Vercel production alias is [rezerv-data-table-nine.vercel.app](https://rezerv-data-table-nine.vercel.app/). Unauthenticated HTTP requests returned `200` and the built HTML for both `/` and direct `/demo`. The first deployment built successfully but failed because the new Vercel project expected `build/`; adding `outputDirectory: "dist"` to `vercel.json` resolved that configuration mismatch.
 
