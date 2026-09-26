@@ -1,0 +1,81 @@
+@import "tailwindcss";
+@import "../tokens/tokens.css";
+
+@theme inline {
+  --color-page: var(--rz-color-page);
+  --color-surface: var(--rz-color-surface);
+  --color-surface-muted: var(--rz-color-surface-muted);
+  --color-ink: var(--rz-color-text);
+  --color-muted: var(--rz-color-text-muted);
+  --color-line: var(--rz-color-border);
+  --color-brand: var(--rz-color-primary);
+  --color-brand-hover: var(--rz-color-primary-hover);
+  --color-brand-contrast: var(--rz-color-primary-contrast);
+  --color-danger: var(--rz-color-danger);
+  --color-danger-surface: var(--rz-color-danger-surface);
+  --color-focus: var(--rz-color-focus);
+  --spacing: var(--rz-space-unit);
+  --radius-sm: var(--rz-radius-sm);
+  --radius-md: var(--rz-radius-md);
+  --radius-lg: var(--rz-radius-lg);
+  --shadow-panel: var(--rz-shadow-panel);
+  --font-sans: var(--rz-font-sans);
+  --text-sm: var(--rz-font-size-small);
+  --text-sm--line-height: var(--rz-line-height-small);
+  --text-lg: var(--rz-font-size-large);
+  --text-lg--line-height: var(--rz-line-height-large);
+  --font-weight-medium: var(--rz-font-weight-medium);
+  --font-weight-semibold: var(--rz-font-weight-semibold);
+  --font-weight-bold: var(--rz-font-weight-bold);
+  --tracking-tight: var(--rz-tracking-tight);
+  --tracking-widest: var(--rz-tracking-wide);
+  --leading-relaxed: var(--rz-leading-relaxed);
+}
+
+html {
+  font-family: var(--rz-font-sans);
+  font-size: var(--rz-font-size-body);
+  background: var(--rz-color-page);
+  color: var(--rz-color-text);
+}
+
+body {
+  min-width: 18rem;
+  min-height: 100vh;
+}
+
+button,
+a {
+  transition-duration: var(--rz-motion-fast);
+}
+
+:focus-visible {
+  outline: 3px solid var(--rz-color-focus);
+  outline-offset: 3px;
+}
+
+.foundation-title {
+  font-size: var(--rz-font-size-heading);
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+}
+
+.foundation-skeleton {
+  animation: foundation-pulse var(--rz-motion-normal) ease-in-out infinite
+    alternate;
+}
+
+@keyframes foundation-pulse {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foundation-skeleton {
+    animation: none;
+  }
+}
