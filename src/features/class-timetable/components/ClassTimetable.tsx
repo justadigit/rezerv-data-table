@@ -81,15 +81,24 @@ const renderAttendees: ExpansionConfig<
 >["renderChildren"] = (children, row) => (
   <AttendeeList attendees={children} session={row} />
 );
+const renderEmpty: ExpansionConfig<ClassSession, Attendee>["renderEmpty"] = ({
+  row,
+}) => (
+  <p className="text-sm text-muted">
+    No attendees are registered for {row.className}.
+  </p>
+);
 const inlineExpansion: ExpansionConfig<ClassSession, Attendee> = {
   mode: "inline",
   getChildren: (row) => row.attendees ?? [],
   renderChildren: renderAttendees,
+  renderEmpty,
 };
 const onDemandExpansion: ExpansionConfig<ClassSession, Attendee> = {
   mode: "on-demand",
   loadChildren: loadAttendees,
   renderChildren: renderAttendees,
+  renderEmpty,
 };
 
 export function ClassTimetable({ fixture }: { fixture: InitialFixture }) {

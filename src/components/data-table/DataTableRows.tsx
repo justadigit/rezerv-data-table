@@ -129,16 +129,20 @@ export function DataTableRows<TRow, TChild>({
     loadState: RowLoadState<TChild> | undefined,
   ) {
     if (!expansion) return null;
-    if (expansion.mode === "inline") {
-      const children = expansion.getChildren(row);
-      return children.length ? (
-        expansion.renderChildren(children, row, { row, rowId, children })
+    const emptyContent = () =>
+      expansion.renderEmpty ? (
+        expansion.renderEmpty({ row, rowId })
       ) : (
         <EmptyState
           title="No details available"
           description="This row has no details to display."
         />
       );
+    if (expansion.mode === "inline") {
+      const children = expansion.getChildren(row);
+      return children.length
+        ? expansion.renderChildren(children, row, { row, rowId, children })
+        : emptyContent();
     }
     if (!loadState || loadState.status === "loading") {
       return (
@@ -160,18 +164,13 @@ export function DataTableRows<TRow, TChild>({
         />
       );
     }
-    return loadState.children.length ? (
-      expansion.renderChildren(loadState.children, row, {
-        row,
-        rowId,
-        children: loadState.children,
-      })
-    ) : (
-      <EmptyState
-        title="No details available"
-        description="This row has no details to display."
-      />
-    );
+    return loadState.children.length
+      ? expansion.renderChildren(loadState.children, row, {
+          row,
+          rowId,
+          children: loadState.children,
+        })
+      : emptyContent();
   }
 
   return rows.map((row, index) => {

@@ -22,10 +22,10 @@ Core coverage lives in `src/tests/data-table/`. The tests cover sorting before p
 | Controlled sort | A | R12 | Table emits a proposed `columnId` state using the column `id`; old visual direction stays until parent supplies new value; incoming data is not sorted again. |
 | Controlled pagination | A | R13 | Page/size callbacks emit `pageIndex`/`pageSize` proposals and reset proposals use index `0`; supplied index and total govern controls without double slicing. A one-based mock API receives conversion at the service boundary only. |
 | Inline expansion | A | R06, R07 | Toggle reveals then hides a full-width child area under the correct parent. |
-| Inline empty | A | R14 | Empty child list shows expansion empty state without hiding the parent. |
+| Inline empty | A | R14 | Empty child list shows the generic fallback by default or the optional feature-owned empty renderer, without hiding the parent. |
 | On-demand loading | A | R06, R16 | Only selected row shows child loading while delayed request is pending. |
 | On-demand success | A | R06 | Resolved children render in the selected row's detail area. |
-| On-demand empty | A | R14 | Successful empty result shows the expansion empty state. |
+| On-demand empty | A | R14 | Successful empty result shows the generic fallback by default or the optional feature-owned empty renderer; cached re-expansion does not refetch. |
 | On-demand error/retry | A | R15 | Failure shows row-local error and retry; retry can succeed. |
 | Cache reuse | A | R06 | Collapse/re-expand after success or empty success does not refetch by default. |
 | Collapse during request | A | R06 | A response after collapse never reopens the row; safe cache behavior follows contract. |
@@ -94,4 +94,10 @@ Manual browser (M): Chromium on `/` at 1280 px, 768 px, and 390 px. At desktop, 
 
 Responsive (M): the 1280 px table fit the content width. At 768 px and 390 px, the table width exceeded its scroll area while the document itself remained exactly the viewport width. The pinned Class header remained at the scroll container's left edge; at 390 px with horizontal scroll, the pinned class cells and expansion toggle stayed visible, and expanded attendee cards were readable. Pagination stayed within the viewport. Statuses and check-in states carried text. Keyboard Enter activated Class sorting and updated `aria-sort`; Space expanded a class; Enter advanced pagination and activated initial Retry; Home then ArrowDown changed the native page size to 10 and reset to page 1. Focused controls showed a 3 px outline. Browser warning/error logs were empty during these checks.
 
-The locked DataTable expansion API handles zero-child results internally, before calling `renderChildren`. Both empty roster modes therefore display its generic “No details available” copy. Feature-specific empty copy cannot be displayed through the current contract; no generic API change was made. Reduced-motion behavior on the actual timetable remains for final UAT; the generic reduced-motion behavior was verified in Phases 3–4. The official second dataset, 5,000-row stress check, public repository, and deployment remain pending.
+At the end of Phase 5, the DataTable expansion API handled zero-child results internally, before calling `renderChildren`, so both empty roster modes displayed generic “No details available” copy. Phase 5.1 resolves that limitation below. Reduced-motion behavior on the actual timetable remains for final UAT; the generic reduced-motion behavior was verified in Phases 3–4. The official second dataset, 5,000-row stress check, public repository, and deployment remain pending.
+
+## Phase 5.1 expansion empty presentation verification (2026-09-26)
+
+Automated (A): the existing generic inline and on-demand empty tests preserve the “No details available” fallback. Two focused DataTable tests cover custom inline and on-demand `renderEmpty`, typed row context, semantic detail structure and ARIA, successful empty caching, and the absence of Retry. The Class Timetable integration assertions now require attendee-specific copy for both inline and on-demand empty rosters and immediate cached re-expansion. Total suite: 65 passing tests.
+
+Manual browser (M): desktop and mobile checks of the real Class Timetable confirmed attendee-specific copy in both sections. Boxing Basics retained that copy after collapse and re-expansion without showing another loading state. The detail remained in the existing full-width table row with the expander's `aria-controls` relationship intact. Console checks reported no errors. Phase 5's generic-copy limitation is resolved; the historical observation above records the prior state.

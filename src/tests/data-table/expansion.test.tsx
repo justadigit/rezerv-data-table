@@ -5,6 +5,7 @@ import {
   DataTable,
   type ColumnDef,
   type ExpansionConfig,
+  type ExpansionEmptyContext,
 } from "@/components/data-table";
 
 type Row = { id: string; name: string; children: string[] };
@@ -88,6 +89,26 @@ describe("DataTable expansion", () => {
     expect(rowFor("Alpha")).toBeInTheDocument();
   });
 
+  it("uses a typed custom empty renderer for inline children", async () => {
+    const user = userEvent.setup();
+    const renderEmpty = vi.fn(({ row, rowId }: ExpansionEmptyContext<Row>) => (
+      <p>{`${row.name} has no children (${rowId})`}</p>
+    ));
+    render(<DataTable {...base} expansion={{ ...inline, renderEmpty }} />);
+    const toggle = toggleFor("Alpha");
+    await user.click(toggle);
+    expect(renderEmpty).toHaveBeenCalledWith({ row: rows[1], rowId: "a" });
+    expect(screen.getByText("Alpha has no children (a)")).toBeInTheDocument();
+    expect(screen.queryByText("No details available")).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(
+      document.getElementById(toggle.getAttribute("aria-controls")!),
+    ).toHaveTextContent("Alpha has no children (a)");
+    expect(
+      rowFor("Alpha").nextElementSibling?.querySelector("td"),
+    ).toHaveAttribute("colspan", "2");
+  });
+
   it("keeps expansion with RowId through sorting and parent-only pagination", async () => {
     const user = userEvent.setup();
     render(
@@ -166,6 +187,38 @@ describe("DataTable expansion", () => {
     await user.click(toggleFor("Alpha"));
     expect(screen.getByText("No details available")).toBeInTheDocument();
     expect(loadChildren).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses a custom empty renderer for cached on-demand success without retry", async () => {
+    const user = userEvent.setup();
+    const loadChildren = vi.fn(async () => [] as string[]);
+    const renderEmpty = vi.fn(({ row }: { row: Row }) => (
+      <p>No children for {row.name}</p>
+    ));
+    render(
+      <DataTable
+        {...base}
+        expansion={{
+          mode: "on-demand",
+          loadChildren,
+          renderChildren,
+          renderEmpty,
+        }}
+      />,
+    );
+    await user.click(toggleFor("Alpha"));
+    expect(
+      await screen.findByText("No children for Alpha"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("No details available")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Retry loading details" }),
+    ).not.toBeInTheDocument();
+    await user.click(toggleFor("Alpha"));
+    await user.click(toggleFor("Alpha"));
+    expect(screen.getByText("No children for Alpha")).toBeInTheDocument();
+    expect(loadChildren).toHaveBeenCalledTimes(1);
+    expect(renderEmpty).toHaveBeenCalledWith({ row: rows[1], rowId: "a" });
   });
 
   it("refetches a successful row on re-expansion when caching is disabled", async () => {

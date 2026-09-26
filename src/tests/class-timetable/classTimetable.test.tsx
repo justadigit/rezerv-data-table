@@ -74,7 +74,9 @@ describe("class timetable integration", () => {
       }),
     );
     expect(
-      within(schedule).getByText("No details available"),
+      within(schedule).getByText(
+        "No attendees are registered for Morning Flow Yoga.",
+      ),
     ).toBeInTheDocument();
     await user.click(
       within(classRow(schedule, "Strength Fundamentals")).getByRole("button", {
@@ -147,8 +149,24 @@ describe("class timetable integration", () => {
       }),
     );
     expect(
-      await within(live).findByText("No details available"),
+      await within(live).findByText(
+        "No attendees are registered for Boxing Basics.",
+      ),
     ).toBeInTheDocument();
+    await user.click(
+      within(classRow(live, "Boxing Basics")).getByRole("button", {
+        name: "Collapse row",
+      }),
+    );
+    await user.click(
+      within(classRow(live, "Boxing Basics")).getByRole("button", {
+        name: "Expand row",
+      }),
+    );
+    expect(
+      within(live).getByText("No attendees are registered for Boxing Basics."),
+    ).toBeInTheDocument();
+    expect(within(live).queryByText("Loading details")).not.toBeInTheDocument();
 
     await user.click(
       within(classRow(live, "Mobility Lab")).getByRole("button", {

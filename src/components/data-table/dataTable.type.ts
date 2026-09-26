@@ -34,29 +34,32 @@ export type ExpansionRenderContext<TRow, TChild> = {
   children: readonly TChild[];
 };
 
-export type ExpansionConfig<TRow, TChild> =
-  | {
-      mode: "inline";
-      getChildren: (row: TRow) => readonly TChild[];
-      renderChildren: (
-        children: readonly TChild[],
-        row: TRow,
-        context: ExpansionRenderContext<TRow, TChild>,
-      ) => ReactNode;
-    }
-  | {
-      mode: "on-demand";
-      loadChildren: (
-        row: TRow,
-        signal: AbortSignal,
-      ) => Promise<readonly TChild[]>;
-      renderChildren: (
-        children: readonly TChild[],
-        row: TRow,
-        context: ExpansionRenderContext<TRow, TChild>,
-      ) => ReactNode;
-      cache?: boolean;
-    };
+export type ExpansionEmptyContext<TRow> = {
+  row: TRow;
+  rowId: RowId;
+};
+
+type ExpansionRenderers<TRow, TChild> = {
+  renderChildren: (
+    children: readonly TChild[],
+    row: TRow,
+    context: ExpansionRenderContext<TRow, TChild>,
+  ) => ReactNode;
+  renderEmpty?: (context: ExpansionEmptyContext<TRow>) => ReactNode;
+};
+
+export type ExpansionConfig<TRow, TChild> = ExpansionRenderers<TRow, TChild> &
+  (
+    | { mode: "inline"; getChildren: (row: TRow) => readonly TChild[] }
+    | {
+        mode: "on-demand";
+        loadChildren: (
+          row: TRow,
+          signal: AbortSignal,
+        ) => Promise<readonly TChild[]>;
+        cache?: boolean;
+      }
+  );
 
 type ControlledSorting = {
   sorting: SortingState;
