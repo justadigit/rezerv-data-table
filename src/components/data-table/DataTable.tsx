@@ -1,31 +1,20 @@
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type CSSProperties } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SortAscendingIcon, SortDescendingIcon, SortIcon } from "@/design";
-import {
-  getColumnValue,
-  isSortableColumn,
-  validateColumns,
-} from "./dataTable.column";
+import { isSortableColumn, validateColumns } from "./dataTable.column";
 import { assertPageSize, defaultPagination } from "./dataTable.pagination";
 import { processRows } from "./dataTable.process";
 import { nextSortingState } from "./dataTable.sorting";
 import { useControllableState, withSortingChange } from "./dataTable.state";
 import type { ColumnDef, DataTableProps, SortingState } from "./dataTable.type";
 import { DataTablePagination } from "./DataTablePagination";
+import { DataTableRows } from "./DataTableRows";
 
 const DEFAULT_COLUMN_WIDTH = 176;
 const SKELETON_ROW_COUNT = 4;
 const DEFAULT_PAGE_SIZES = [10, 20, 50] as const;
-
-function defaultCell(value: unknown): ReactNode {
-  if (typeof value === "string" || typeof value === "number") return value;
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (value instanceof Date && !Number.isNaN(value.getTime()))
-    return value.toLocaleDateString();
-  return "—";
-}
 
 function columnLayout<TRow>(columns: readonly ColumnDef<TRow>[]) {
   let left = 0;
@@ -159,7 +148,7 @@ export function DataTable<TRow, TChild = never>(
         </p>
       ) : null}
       <div
-        className="max-w-full overflow-x-auto"
+        className="data-table-scroll max-w-full overflow-x-auto"
         onScroll={(event) => setScrolled(event.currentTarget.scrollLeft > 0)}
       >
         <table
@@ -254,36 +243,16 @@ export function DataTable<TRow, TChild = never>(
                 </td>
               </tr>
             ) : null}
-            {state === "success"
-              ? processed?.rows.map((row, rowIndex) => (
-                  <tr
-                    key={processed.rowIds[rowIndex]}
-                    className="group hover:bg-surface-muted"
-                  >
-                    {props.columns.map((column, index) => {
-                      const value = getColumnValue(row, column);
-                      return (
-                        <td
-                          key={column.id}
-                          style={{
-                            ...cellStyle(index),
-                            textAlign: column.align,
-                          }}
-                          className={`border-b border-line px-4 py-3 text-ink ${cellClass(index, false)} ${layout[index]?.pinnedLeft !== undefined ? "group-hover:bg-surface-muted" : ""}`}
-                        >
-                          {column.cell
-                            ? column.cell({
-                                row,
-                                rowId: processed.rowIds[rowIndex]!,
-                                value,
-                              })
-                            : defaultCell(value)}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))
-              : null}
+            <DataTableRows
+              key={`${props.expansion?.mode ?? "none"}:${typeof props.expansionResetKey}:${String(props.expansionResetKey)}`}
+              rows={state === "success" ? (processed?.rows ?? []) : []}
+              rowIds={state === "success" ? (processed?.rowIds ?? []) : []}
+              columns={props.columns}
+              expansion={props.expansion}
+              cellStyle={cellStyle}
+              cellClass={cellClass}
+              pinnedAt={(index) => layout[index]?.pinnedLeft !== undefined}
+            />
           </tbody>
         </table>
       </div>

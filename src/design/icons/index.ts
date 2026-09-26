@@ -6,4 +6,5 @@ export {
   ArrowsUpDownIcon as SortIcon,
   ArrowUpIcon as SortAscendingIcon,
   ArrowDownIcon as SortDescendingIcon,
+  ChevronRightIcon as ExpandIcon,
 } from "@heroicons/react/24/outline";

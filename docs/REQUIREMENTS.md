@@ -4,7 +4,7 @@
 
 ## Required by the assessment
 
-- [ ] **R01** Build a reusable, fully typed React/TypeScript DataTable from scratch, driven by column definitions, with no table/grid library. Mock JSON or mocked API calls suffice; no backend is required.
+- [x] **R01** Build a reusable, fully typed React/TypeScript DataTable from scratch, driven by column definitions, with no table/grid library. Mock JSON or mocked API calls suffice; no backend is required.
 - [ ] **R02** Render a fitness studio class timetable as a self-contained SaaS dashboard view. Parent rows are classes; child rows are attendees. The component itself remains generic.
 - [x] **R03** Provide columns with at least key/accessor, header label, custom cell render, sortable flag, width, and pinned flag. The project contract distinguishes column `id` from direct `accessorKey` and derived `accessor` (see [contracts](CONTRACTS.md)). The suggested class, instructor, time, attendance, and status columns may be adjusted.
 - [x] **R04** Implement client-side sorting from header interaction with ascending, descending, and unsorted states.
@@ -25,9 +25,9 @@
 
 ## Edge Cases
 
-- [ ] **R14** Handle empty parent data and empty child lists.
-- [ ] **R15** Handle failed initial data fetch and failed on-demand child fetch.
-- [ ] **R16** Show loading feedback for slow initial and child fetches.
+- [x] **R14** Handle empty parent data and empty child lists.
+- [x] **R15** Handle failed initial data fetch and failed on-demand child fetch.
+- [x] **R16** Show loading feedback for slow initial and child fetches.
 - [x] **R17** Keep the left-pinned column usable on narrow/mobile viewports.
 - [ ] **R18** Keep interactions smooth with a larger dataset, including sorting and scrolling.
 - [x] **R19** Handle an invalid sort key (unknown `columnId` in the project contract) and an out-of-range page safely.
@@ -45,7 +45,7 @@
 
 ## Accessibility
 
-- [ ] **R25** Use semantic table markup, keyboard focus and operation for interactive controls, and useful ARIA. The locked contract specifies `aria-sort`, `aria-expanded`, visible focus, and stable expanded-content IDs where needed.
+- [x] **R25** Use semantic table markup, keyboard focus and operation for interactive controls, and useful ARIA. The locked contract specifies `aria-sort`, `aria-expanded`, visible focus, and stable expanded-content IDs where needed.
 
 ## Deliverables
 

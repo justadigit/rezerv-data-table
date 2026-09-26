@@ -26,5 +26,6 @@ Decisions are project choices, not claims that the assessment mandates them. Beh
 | D20 | Manual performance fixture of 5,000 parent rows | Provides a repeatable stress baseline without implying production capacity. |
 | D21 | Numeric, `Intl.Collator`, and timestamp defaults; nullish last | Defines predictable v1 sorting while allowing column comparators for complex values. |
 | D22 | Manual pagination requires manual sorting | A supplied server page cannot be correctly sorted as though it were the full dataset. |
+| D23 | Explicit `expansionResetKey` for dataset changes | Row IDs alone cannot reveal whether a new source reuses semantic IDs; a caller-owned key gives cache invalidation a clear, small boundary. |
 
 Revisit a decision only when a concrete assessment or technical conflict is documented. Do not silently change the locked stack or boundaries.

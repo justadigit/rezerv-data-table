@@ -3,6 +3,7 @@ export type {
   ColumnDef,
   DataTableProps,
   ExpansionConfig,
+  ExpansionRenderContext,
   PaginationState,
   RowId,
   SortDirection,

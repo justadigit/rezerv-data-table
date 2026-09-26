@@ -1,8 +1,8 @@
 # Test and user acceptance plan
 
-The Phase 2 DataTable core has automated tests for value access, pure sorting and pagination, state ownership, processing order, and row identity. Phase 3 adds rendered-component tests and browser checks for the table UI. Expansion, feature, stress, and deployment checks remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
+The Phase 2 DataTable core has automated tests for value access, pure sorting and pagination, state ownership, processing order, and row identity. Phase 3 adds rendered-component tests and browser checks for the table UI. Phase 4 adds inline and on-demand expansion tests plus browser checks; feature, stress, and deployment checks remain pending. `A` means automated component/integration test; `M` means manual browser review. IDs trace to [requirements](REQUIREMENTS.md); expected behavior comes from [contracts](CONTRACTS.md). Add only meaningful tests for behavior that is implemented.
 
-Core coverage lives in `src/tests/data-table/`. The tests cover sorting before pagination plus rendered header buttons and ARIA, value and cell rendering, table states, pagination, controlled proposals, keyboard activation, and static pin offsets. jsdom does not prove real browser sticky behavior; expansion remains pending.
+Core coverage lives in `src/tests/data-table/`. The tests cover sorting before pagination plus rendered header buttons and ARIA, value and cell rendering, table states, pagination, controlled proposals, keyboard activation, and static pin offsets. jsdom does not prove real browser sticky behavior; expansion is covered separately in `expansion.test.tsx`.
 
 | Check | Mode | Requirement | Acceptance result |
 | --- | --- | --- | --- |
@@ -67,3 +67,13 @@ Browser: Chromium through agent-browser on the local Vite `/demo` route. Desktop
 Keyboard: Tab reached sortable buttons with a visible solid focus outline; Enter and Space activated sorting and updated `aria-sort`. Tab reached the native page-size select and pagination buttons. The native select was exercised by the automated interaction test; the browser CLI's ArrowDown sequence did not change its value, so manual keyboard selection remains unconfirmed. Reduced-motion emulation disabled skeleton animation. Browser console and page-error checks reported no errors.
 
 These Phase 3 observations use neutral preview rows and do not complete the class timetable, real second dataset, expansion, 5,000-row stress, or deployed-site checks.
+
+## Phase 4 verification (2026-09-26)
+
+Automated: 14 expansion tests in `src/tests/data-table/expansion.test.tsx` pass. They cover inline detail and empty content, stable RowId behavior through sorting/pagination, semantic detail rows and ARIA, native keyboard activation, row-local loading, success and empty caching, retry, concurrent requests, collapse during load, stale older success/error, reset-key invalidation, abort, and unmount cleanup. Total suite: 54 passing tests.
+
+Browser: Chromium on local `/demo` at 1280 px, 768 px, and 390 px. Inline mode expanded two rows at once, including an empty child result; the detail cell spanned six data columns and `aria-controls` resolved to its content ID. On-demand mode showed two concurrent loading rows, then both successes; cached re-expansion displayed immediately. Empty, failure, retry, and collapse during a slow load were exercised. Retry succeeded after the offscreen button was scrolled into view in the browser tool. Sorting and page navigation hid off-page detail rows and restored the cached detail with its parent; no orphan detail rows appeared.
+
+Pinned and responsive: the expander remained in the first pinned cell. At tablet and mobile widths, horizontal scrolling kept pinned headers in place; the detail content remained within the visible scroll area, including at 390 px after a 350 px horizontal scroll. Document width did not exceed the mobile viewport. Keyboard Tab reached the expander with a visible focus outline; Enter and Space changed `aria-expanded`; `aria-controls` pointed to the rendered detail content. Reduced-motion emulation disabled the detail animation. Browser page-error and console checks showed no errors.
+
+The neutral fixture does not count as the class timetable or official second dataset. The CSS provides a short entrance transition and rotating indicator; collapse removes the detail row immediately to preserve simple table semantics. The assessment's full smooth expand/collapse acceptance item remains pending.

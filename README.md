@@ -2,7 +2,7 @@
 
 ## Project overview
 
-Phase 3 adds a rendered, domain-independent DataTable on top of the Phase 2 core. The assessment features remain future work.
+Phase 4 adds a generic row-expansion engine to the rendered DataTable. The assessment's domain features remain future work.
 
 ## Assessment scope
 
@@ -14,11 +14,17 @@ React, strict TypeScript, Vite, Tailwind CSS, React Router, and Heroicons throug
 
 ## Implemented features
 
-Foundation plus the generic DataTable core and rendered component: semantic table markup, sortable button headers, client and manual pagination controls, column-aligned loading skeletons, generic error/empty states, multiple left-pinned columns, horizontal scrolling, and keyboard/ARIA foundations. Expansion, the class timetable, attendee views, and the official second dataset are not implemented yet.
+Foundation plus the generic DataTable core and rendered component: semantic table markup, sortable button headers, client and manual pagination controls, column-aligned loading skeletons, generic error/empty states, multiple left-pinned columns, and horizontal scrolling. Inline expansion renders caller-supplied children; on-demand expansion uses row-local loading, success, empty, error, and retry states. Successful and empty results are cached by default, request generations reject stale completions, and active requests abort on reset or unmount. Expansion buttons are native keyboard controls with `aria-expanded` and stable detail IDs. The class timetable, attendee views, and official second dataset are not implemented yet.
 
 ## Routes and demo pages
 
-`/` is the future class timetable route and remains a foundation placeholder. `/demo` contains temporary neutral rows for Phase 3 visual checks; it is not the official second dataset demo.
+`/` is the future class timetable route and remains a foundation placeholder. `/demo` contains temporary neutral rows and explicit expansion scenarios for visual checks; it is not the official second dataset demo.
+
+## Expansion API
+
+Pass `expansion` to `DataTable<TRow, TChild>`. Inline mode supplies `getChildren(row)`; on-demand mode supplies `loadChildren(row, signal)`. Both modes supply `renderChildren(children, row, context)`, where the typed context includes `row`, `rowId`, and `children`. Existing two-argument renderers remain valid. The first data cell contains the toggle, and the detail row spans the data columns without affecting parent pagination.
+
+On-demand success and empty success are cached by stable `getRowId` by default; set `cache: false` to refetch on re-expansion. Errors remain row-local and offer Retry. A collapsed request may finish and populate cache without reopening its row. The table aborts superseded and unmounted requests and ignores completions from older request generations. Set `expansionResetKey` to a new string or number whenever a different dataset may reuse row IDs; this clears expansion state and cache without resetting sorting or pagination. See [contracts](docs/CONTRACTS.md) for the full ownership rules.
 
 ## Setup
 
@@ -51,7 +57,7 @@ The app lives in `src/app/`; reusable UI and the DataTable are in `src/component
 
 ## Testing
 
-Foundation, DataTable core, and rendered table behavior are tested with Vitest and React Testing Library. Browser observations are recorded in [test and UAT](docs/TEST-UAT.md).
+Foundation, DataTable core, rendered table, and expansion behavior are tested with Vitest and React Testing Library. Browser observations are recorded in [test and UAT](docs/TEST-UAT.md).
 
 ## Tradeoffs
 

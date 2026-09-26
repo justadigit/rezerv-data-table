@@ -4,6 +4,7 @@ export {
   ModulesIcon,
   SuccessIcon,
   SortIcon,
+  ExpandIcon,
   SortAscendingIcon,
   SortDescendingIcon,
 } from "./icons";

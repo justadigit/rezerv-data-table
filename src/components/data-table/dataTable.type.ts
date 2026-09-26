@@ -28,11 +28,21 @@ export type ColumnDef<TRow> = {
   align?: "left" | "center" | "right";
 };
 
+export type ExpansionRenderContext<TRow, TChild> = {
+  row: TRow;
+  rowId: RowId;
+  children: readonly TChild[];
+};
+
 export type ExpansionConfig<TRow, TChild> =
   | {
       mode: "inline";
       getChildren: (row: TRow) => readonly TChild[];
-      renderChildren: (children: readonly TChild[], row: TRow) => ReactNode;
+      renderChildren: (
+        children: readonly TChild[],
+        row: TRow,
+        context: ExpansionRenderContext<TRow, TChild>,
+      ) => ReactNode;
     }
   | {
       mode: "on-demand";
@@ -40,7 +50,12 @@ export type ExpansionConfig<TRow, TChild> =
         row: TRow,
         signal: AbortSignal,
       ) => Promise<readonly TChild[]>;
-      renderChildren: (children: readonly TChild[], row: TRow) => ReactNode;
+      renderChildren: (
+        children: readonly TChild[],
+        row: TRow,
+        context: ExpansionRenderContext<TRow, TChild>,
+      ) => ReactNode;
+      cache?: boolean;
     };
 
 type ControlledSorting = {
@@ -93,4 +108,5 @@ export type DataTableProps<TRow, TChild = never> = {
   loading?: boolean;
   error?: Error | null;
   expansion?: ExpansionConfig<TRow, TChild>;
+  expansionResetKey?: string | number;
 } & StateMode;
