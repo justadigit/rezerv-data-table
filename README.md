@@ -1,6 +1,6 @@
 # Rezerv Frontend Engineering Assessment — Part 2
 
-A typed, reusable DataTable presented in two dashboard views. [Live application](https://rezerv-data-table-nine.vercel.app/) · [Public source repository](https://github.com/justadigit/rezerv-data-table). Review the Class Timetable at `/` for client sorting, pagination, pinned columns, and both expansion modes; open `/demo` for the User Directory, which uses the same table with parent-owned sorting and pagination against a mocked server. No backend or environment variables are required.
+A typed, reusable DataTable presented in two dashboard views. [Live application](https://rezerv-data-table.pyllord.com) · [Public source repository](https://github.com/justadigit/rezerv-data-table). Review the Class Timetable at `/` for client sorting, pagination, pinned columns, and both expansion modes; open `/demo` for the User Directory, which uses the same table with parent-owned sorting and pagination against a mocked server. No backend or environment variables are required.
 
 ## Routes and fixtures
 
